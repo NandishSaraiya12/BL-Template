@@ -1,84 +1,44 @@
 import { useParticipant } from "@videosdk.live/react-sdk";
-import { useMemo } from "react";
-import ReactPlayer from "react-player";
-import MicOffIcon from "../icons/MicOffIcon";
+import { useEffect, useRef } from "react";
 
-export const ParticipantView = (props) => {
-  const { webcamStream, webcamOn, displayName, micOn } = useParticipant(
-    props.participantId
-  );
+export const ParticipantVideo = ({ participantId, name }) => {
+  const { webcamStream, webcamOn } = useParticipant(participantId);
+  const videoRef = useRef(null);
+  const hasVideo = webcamOn && webcamStream;
 
-  const videoStream = useMemo(() => {
-    if (webcamOn && webcamStream) {
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (hasVideo) {
       const mediaStream = new MediaStream();
       mediaStream.addTrack(webcamStream.track);
-      return mediaStream;
+      video.srcObject = mediaStream;
+      video.play().catch((err) => {
+        console.log(err, "participant video error");
+      });
+    } else {
+      video.srcObject = null;
     }
-  }, [webcamStream, webcamOn]);
+  }, [hasVideo, webcamStream]);
 
   return (
-    <div
-      className="participant-view"
-      style={{
-        width: "100%",
-        height: "400px",
-        maxWidth: "600px",
-        display: "flex",
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-        backgroundColor: "#1A1C22",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-      class="video-cover"
-    >
-      {webcamOn && webcamStream ? (
-        <ReactPlayer
-          //
-          playsinline // very very imp prop
-          pip={false}
-          light={false}
-          controls={false}
-          muted={true}
-          playing={true}
-          //
-          url={videoStream}
-          //
-          height={"100%"}
-          width={"100%"}
-          onError={(err) => {
-            console.log(err, "participant video error");
-          }}
-        />
-      ) : (
-        <div
-          style={{
-            fontSize: "50px",
-            color: "#fff",
-          }}
-        >
-          {String(displayName).charAt(0).toUpperCase()}
-        </div>
-      )}
-      <div
-        style={{
-          position: "absolute",
-          left: "10px",
-          bottom: "10px",
-          backgroundColor: "#050A0E",
-          color: "#fff",
-          padding: "4px",
-          borderRadius: "4px",
-          alignItems: "center",
-          justifyItems: "center",
-          display: "flex",
-        }}
-      >
-        {displayName}{" "}
-        {!micOn && <MicOffIcon fillcolor="#fff" height="18" width="18" />}
-      </div>
-    </div>
+    <>
+      <video
+        ref={videoRef}
+        className="participant-video"
+        style={{ display: hasVideo ? "block" : "none" }}
+        autoPlay
+        playsInline // very very imp prop
+        muted
+      />
+      {!hasVideo && <Avatar name={name} />}
+    </>
   );
 };
+
+export const Avatar = ({ name }) => (
+  <div className="avatar">
+    <span>{String(name || "?").charAt(0).toUpperCase()}</span>
+  </div>
+);

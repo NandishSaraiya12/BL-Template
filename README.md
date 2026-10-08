@@ -79,6 +79,55 @@ const startRecording = () => {
 
 ```
 
+## Beatland layout
+
+The template renders a fixed 8-tile layout: 2 battlers, 1 host (circle) and 5 judges. Empty slots show a placeholder, so all 8 tiles are always on screen.
+
+### Preview without a meeting
+
+```
+npm start
+# open http://localhost:3000/react-custom-template-demo/?demo=true
+```
+
+### Template URL options
+
+| Param | Default | Description |
+| --- | --- | --- |
+| `orientation` | `landscape` | `portrait` switches to the 9:16 Instagram layout |
+| `rotate` | `90` in portrait, `0` otherwise | Rotates the stage. In portrait, the 9:16 layout is turned 90° to fill a normal 16:9 recording. Rotate the final video 90° counter-clockwise to get a proper Instagram reel. Use `rotate=0` if the recording itself is portrait |
+| `category` | `SOLO CATEGORY` | Header text (also used in the footer) |
+| `centerText` | empty | Text in the bar between the battler names, e.g. `ROUND 1` |
+| `footer` | event details | Footer items separated by `\|` |
+| `live` | `true` | `false` hides the LIVE badge |
+| `demo` | `false` | Renders sample names with no meeting |
+
+### Choosing who goes in which tile
+
+Slots are filled in this order of priority:
+
+1. **PubSub from the host app** on the `BEATLAND_LAYOUT` topic. Messages are JSON and are merged, so you can send partial updates. Use `persist: true` so the template gets the latest layout when it joins.
+
+   ```js
+   const { publish } = usePubSub("BEATLAND_LAYOUT");
+   publish(
+     JSON.stringify({
+       battlers: ["<participantIdA>", "<participantIdB>"],
+       host: "<participantId>",
+       judges: ["<id1>", "<id2>", "<id3>", "<id4>", "<id5>"],
+       countries: { "<participantIdA>": "ca" }, // ISO country codes for flags
+       names: { "<participantIdA>": "DEN" },     // optional display-name overrides
+       centerText: "ROUND 1",
+     }),
+     { persist: true }
+   );
+   ```
+
+2. **Participant metaData** passed when each person joins: `metaData: { role: "battler" | "host" | "judge", country: "ca" }`.
+3. **Join order**: the first two speakers are battlers, then the host, then judges.
+
+To use the official logo, add it as `public/beatland-logo.png`. Otherwise a built-in version is shown.
+
 ## Documentation
 
 [Read the documentation](https://docs.videosdk.live/) to start using VideoSDK.
