@@ -87,7 +87,7 @@ The template renders a fixed 8-tile layout: 2 battlers, 1 host (circle) and 5 ju
 
 ```
 npm start
-# open http://localhost:3000/react-custom-template-demo/?demo=true
+# open http://localhost:3000/?demo=true
 ```
 
 ### Template URL options
