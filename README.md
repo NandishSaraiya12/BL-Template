@@ -95,12 +95,35 @@ npm start
 | Param | Default | Description |
 | --- | --- | --- |
 | `orientation` | `landscape` | `portrait` switches to the 9:16 Instagram layout |
-| `rotate` | `90` in portrait, `0` otherwise | Rotates the stage. In portrait, the 9:16 layout is turned 90° to fill a normal 16:9 recording. Rotate the final video 90° counter-clockwise to get a proper Instagram reel. Use `rotate=0` if the recording itself is portrait |
+| `rotate` | `90` in portrait, `0` otherwise | Rotates the stage. In portrait, the 9:16 Instagram layout is turned 90° so it fills the 16:9 livestream frame. Use `-90` to turn it the other way, or `0` for no rotation |
 | `category` | `SOLO CATEGORY` | Header text (also used in the footer) |
 | `centerText` | empty | Text in the bar between the battler names, e.g. `ROUND 1` |
 | `footer` | event details | Footer items separated by `\|` |
 | `live` | `true` | `false` hides the LIVE badge |
 | `demo` | `false` | Renders sample names with no meeting |
+
+### Going live on Instagram
+
+Use the RTMP livestream API with the portrait template URL. Nothing is recorded.
+
+```js
+const templateUrl =
+  `https://your-domain.com/?meetingId=${roomId}&token=${token}&orientation=portrait`;
+
+await fetch("https://api.videosdk.live/v2/livestreams/start", {
+  method: "POST",
+  headers: { Authorization: token, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    roomId,
+    templateUrl,
+    outputs: [
+      { url: "rtmp://live-upload.instagram.com:80/rtmp/", streamKey: "<INSTAGRAM_STREAM_KEY>" },
+    ],
+  }),
+});
+```
+
+Get the stream URL and key from Instagram Live Producer each time you go live. For YouTube or another landscape platform, use the same call without `orientation=portrait`.
 
 ### Choosing who goes in which tile
 

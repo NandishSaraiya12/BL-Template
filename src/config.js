@@ -1,9 +1,9 @@
 // Template settings read from the template URL query string.
 //
 //   orientation  landscape (default) | portrait
-//   rotate       degrees to rotate the stage. Defaults to 90 in portrait so a
-//                9:16 layout fills a 16:9 recording (rotate the final video back
-//                for Instagram). Use rotate=0 if the recording itself is portrait.
+//   rotate       degrees to rotate the stage. Defaults to 90 in portrait, so the
+//                9:16 Instagram layout is sent turned sideways inside the 16:9
+//                stream. Use -90 to turn it the other way, or 0 for no rotation.
 //   category     header + footer category text, e.g. "SOLO CATEGORY"
 //   centerText   text shown in the bar between the battler names
 //   footer       footer items separated by "|"

@@ -13,7 +13,7 @@ export const Notification = () => {
     }, 3200);
   };
   const [message, setMessage] = useState(null);
-  const { publish } = usePubSub("VIEWER_MESSAGE", {
+  const {  } = usePubSub("VIEWER_MESSAGE", {
     onMessageReceived: handleChatMessage,
   });
   useEffect(() => {
